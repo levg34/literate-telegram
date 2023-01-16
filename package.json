@@ -4,7 +4,8 @@
   "description": "Webapp to chat, exchange and save images, files, and links",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node server.ts"
+    "start": "ts-node server.ts",
+    "dev": "nodemon server.ts"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@types/node": "^18.11.18",
     "@types/ws": "^8.5.4",
+    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4"
