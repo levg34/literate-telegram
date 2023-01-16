@@ -1,0 +1,30 @@
+{
+  "name": "literate-telegram",
+  "version": "1.0.0",
+  "description": "Webapp to chat, exchange and save images, files, and links",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/levg34/literate-telegram.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/levg34/literate-telegram/issues"
+  },
+  "homepage": "https://github.com/levg34/literate-telegram#readme",
+  "dependencies": {
+    "ws": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/ws": "^8.5.4",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4"
+  }
+}
