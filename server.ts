@@ -38,7 +38,7 @@ wss.on('connection', function connection(ws: WSId) {
         console.log('received: %s', data)
         const received = new Message(JSON.parse(data.toString()))
         received.sender = ws.id || 'Unknown'
-        received.color = users.find(u => u.id === ws.id)?.color || '#D3D3D3'
+        received.color = ws.color || '#D3D3D3'
 
         wss.clients.forEach((client: WSId) => {
             const clientId = client.id
@@ -49,8 +49,20 @@ wss.on('connection', function connection(ws: WSId) {
     })
 
     const welcome = new Message({
-        message: 'Hello there from server!',
-        sender: 'Server'
+        message: `Hello! There are ${users.length} connected users.`,
+        sender: 'Server',
+        color: ws.color
     })
     ws.send(stringifyMessage(welcome))
+
+    wss.clients.forEach((client: WSId) => {
+        const clientId = client.id
+        if (!clientId || (clientId && clientId !== ws.id)) {
+            client.send(stringifyMessage(new Message({
+                message: 'Connected',
+                color: ws.color,
+                sender: ws.id
+            })))
+        }
+    })
 })
