@@ -17,19 +17,17 @@ interface WSId extends WebSocket.WebSocket  {
 type User = {
     id: string
     color: string
-    ws: WebSocket.WebSocket
 }
 
-const users: User[] = []
+let users = 0
 
 wss.on('connection', function connection(ws: WSId) {
     const user: User = {
         id: randomUUID(),
-        color: colors[users.length%(colors.length)], //getColor(users.length),
-        ws
+        color: colors[users%(colors.length)], //getColor(users.length),
     }
 
-    users.push(user)
+    ++users
 
     ws.id = user.id
     ws.color = user.color
@@ -48,8 +46,10 @@ wss.on('connection', function connection(ws: WSId) {
         })
     })
 
+    const welcomeMessage = this.clients.size > 1 ? `There are ${this.clients.size-1} other user(s) connected.` : 'You are alone here.'
+
     const welcome = new Message({
-        message: `Hello! There are ${users.length} connected users.`,
+        message: `Hello! ${welcomeMessage}`,
         sender: 'Server',
         color: ws.color
     })
@@ -64,5 +64,15 @@ wss.on('connection', function connection(ws: WSId) {
                 sender: ws.id
             })))
         }
+    })
+
+    ws.on('close', () => {
+        wss.clients.forEach((client: WSId) => {
+            client.send(stringifyMessage(new Message({
+                message: 'Disconnected',
+                color: ws.color,
+                sender: ws.id
+            })))
+        })
     })
 })
