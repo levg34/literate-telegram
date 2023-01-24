@@ -3,7 +3,9 @@ import { Message } from './message'
 import { randomUUID } from 'crypto'
 import colors from './colors.json'
 
-const wss = new WebSocketServer({ port: 8080 })
+require('dotenv').config()
+
+const wss = new WebSocketServer({ port: Number(process.env.WS_PORT) ?? 8080 })
 
 const stringifyMessage = (message: Message): string => {
     return JSON.stringify(message.toJSON())
@@ -34,16 +36,24 @@ wss.on('connection', function connection(ws: WSId) {
 
     ws.on('message', function message(data) {
         console.log('received: %s', data)
-        const received = new Message(JSON.parse(data.toString()))
-        received.sender = ws.id || 'Unknown'
-        received.color = ws.color || '#D3D3D3'
-
-        wss.clients.forEach((client: WSId) => {
-            const clientId = client.id
-            if (!clientId || (clientId && clientId !== ws.id)) {
-                client.send(stringifyMessage(received))
-            }
-        })
+        try {
+            const received = new Message(JSON.parse(data.toString()))
+            received.sender = ws.id || 'Unknown'
+            received.color = ws.color || '#D3D3D3'
+    
+            wss.clients.forEach((client: WSId) => {
+                const clientId = client.id
+                if (!clientId || (clientId && clientId !== ws.id)) {
+                    client.send(stringifyMessage(received))
+                }
+            })
+        } catch (e) {
+            console.error(e)
+            ws.send(stringifyMessage(new Message({
+                message: 'Error: wrong format.'
+            })))
+            ws.close()
+        }
     })
 
     const welcomeMessage = this.clients.size > 1 ? `There are ${this.clients.size-1} other user(s) connected.` : 'You are alone here.'
